@@ -4,7 +4,7 @@ import os
 import nest_asyncio
 import asyncio
 
-# Load token from the environment or .env file
+# Load token from environment or .env file
 TOKEN = os.environ.get("TOKEN")
 if not TOKEN:
     try:
@@ -17,12 +17,12 @@ if not TOKEN:
     except FileNotFoundError:
         pass
 
-# Validate the token
+# Validate token
 if not TOKEN:
     print("ERROR: No TOKEN found. Please check your .env file or environment variables.")
     exit(1)
 else:
-    print(f"TOKEN loaded successfully: {TOKEN[:10]}...")  # Only show first 10 characters for security
+    print(f"TOKEN loaded successfully: {TOKEN[:10]}...")  # Only show first 10 chars for security
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Welcome Keanu 👋 Your bot is live!")
@@ -38,7 +38,6 @@ async def main():
     
     app = ApplicationBuilder().token(TOKEN).build()
 
-    # Register commands for the bot
     await app.bot.set_my_commands([
         BotCommand("start", "Start the bot"),
         BotCommand("signal", "Get a signal"),
@@ -56,8 +55,8 @@ if __name__ == "__main__":
         asyncio.run(main())
     except RuntimeError as e:
         if "cannot be called from a running event loop" in str(e):
-            async def run_bot():
-                await main()
-            asyncio.run(run_bot())
+            nest_asyncio.apply()
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(main())
         else:
             print(f"Runtime error occurred: {e}")
