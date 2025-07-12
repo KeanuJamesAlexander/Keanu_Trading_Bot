@@ -1,24 +1,47 @@
 from telegram import Update, BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import os
+import nest_asyncio
+import asyncio
 
+# Load token from the environment or .env file
 TOKEN = os.environ.get("TOKEN")
+if not TOKEN:
+    try:
+        with open('.env', 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith('TOKEN='):
+                    TOKEN = line.split('=', 1)[1].strip().strip('"').strip("'")
+                    break
+    except FileNotFoundError:
+        pass
+
+# Validate the token
+if not TOKEN:
+    print("ERROR: No TOKEN found. Please check your .env file or environment variables.")
+    exit(1)
+else:
+    print(f"TOKEN loaded successfully: {TOKEN[:10]}...")  # Only show first 10 characters for security
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Welcome Keanu 👋 Your bot is now live!")
+    await update.message.reply_text("Welcome Keanu 👋 Your bot is live!")
 
 async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🚀 BUY Gold @ 1950\nTP: 1960\nSL: 1945")
+    await update.message.reply_text("🚀 BUY XAU/USD @ 1950\nTP: 1960\nSL: 1945")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("/start - Start\n/signal - Get signal\n/help - Help")
 
 async def main():
+    nest_asyncio.apply()  # Ensure compatibility with Replit
+    
     app = ApplicationBuilder().token(TOKEN).build()
 
+    # Register commands for the bot
     await app.bot.set_my_commands([
         BotCommand("start", "Start the bot"),
-        BotCommand("signal", "Get signal"),
+        BotCommand("signal", "Get a signal"),
         BotCommand("help", "Help info")
     ])
 
@@ -29,5 +52,12 @@ async def main():
     await app.run_polling()
 
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except RuntimeError as e:
+        if "cannot be called from a running event loop" in str(e):
+            async def run_bot():
+                await main()
+            asyncio.run(run_bot())
+        else:
+            print(f"Runtime error occurred: {e}")
