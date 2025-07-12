@@ -3,9 +3,9 @@ import asyncio
 from telegram import Update, BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-TOKEN = "8014707054:AAGuYgzHLVsrIB4K2B89F_v1vlio4q5iV08"
+nest_asyncio.apply()  # Allows nested event loops
 
-nest_asyncio.apply()
+TOKEN = "8014707054:AAGuYgzHLVsrIB4K2B89F_v1vlio4q5iV08"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Welcome Keanu! Bot is online.")
@@ -32,13 +32,7 @@ async def main():
     print("Bot is polling...")
     await app.run_polling()
 
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except RuntimeError as e:
-        if "event loop is running" in str(e):
-            loop = asyncio.get_event_loop()
-            loop.create_task(main())
-            loop.run_forever()
-        else:
-            raise
+# Instead of asyncio.run(), use this:
+loop = asyncio.get_event_loop()
+loop.create_task(main())
+loop.run_forever()
