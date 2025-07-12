@@ -55,7 +55,7 @@ if __name__ == "__main__":
         asyncio.run(main())
     except RuntimeError as e:
         if "cannot be called from a running event loop" in str(e):
-            nest_asyncio.apply()
+            nest_asyncio.apply()  # Apply nest_asyncio if event loop is running
             loop = asyncio.get_event_loop()
             loop.run_until_complete(main())
         else:
