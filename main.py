@@ -1,16 +1,12 @@
-import os
 import nest_asyncio
 import asyncio
 from telegram import Update, BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-nest_asyncio.apply()  # Patch asyncio for nested event loops
+nest_asyncio.apply()
 
-TOKEN = os.environ.get("TOKEN")
-
-if not TOKEN:
-    print("ERROR: TOKEN not found in environment variables!")
-    exit(1)
+# Your bot token (keep this private!)
+TOKEN = "8014707054:AAGuYgzHLVsrIB4K2B89F_v1vlio4q5iV08"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Welcome Keanu 👋 Your bot is live!")
@@ -38,14 +34,7 @@ async def main():
     print("Bot is polling...")
     await app.run_polling()
 
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except RuntimeError as e:
-        if "event loop is already running" in str(e):
-            # For environments like Jupyter/Replit
-            loop = asyncio.get_event_loop()
-            loop.create_task(main())
-            loop.run_forever()
-        else:
-            raise
+asyncio.ensure_future(main())
+
+loop = asyncio.get_event_loop()
+loop.run_forever()
