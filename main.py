@@ -4,7 +4,7 @@ import asyncio
 from telegram import Update, BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-nest_asyncio.apply()  # Patch event loop for environments like Replit
+nest_asyncio.apply()  # Patch asyncio for nested event loops
 
 TOKEN = os.environ.get("TOKEN")
 
@@ -39,11 +39,13 @@ async def main():
     await app.run_polling()
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(main())
+        asyncio.run(main())
     except RuntimeError as e:
-        print(f"Caught runtime error: {e}")
-        # If event loop already running, run in existing loop
-        asyncio.ensure_future(main())
-        loop.run_forever()
+        if "event loop is already running" in str(e):
+            # For environments like Jupyter/Replit
+            loop = asyncio.get_event_loop()
+            loop.create_task(main())
+            loop.run_forever()
+        else:
+            raise
