@@ -5,10 +5,10 @@ import os
 TOKEN = os.environ.get("TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Welcome Keanu 👋 Your bot is live!")
+    await update.message.reply_text("Welcome Keanu 👋 Your bot is now live!")
 
 async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🚀 BUY XAU/USD @ 1950\nTP: 1960\nSL: 1945")
+    await update.message.reply_text("🚀 BUY Gold @ 1950\nTP: 1960\nSL: 1945")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("/start - Start\n/signal - Get signal\n/help - Help")
@@ -18,7 +18,7 @@ async def main():
 
     await app.bot.set_my_commands([
         BotCommand("start", "Start the bot"),
-        BotCommand("signal", "Get a signal"),
+        BotCommand("signal", "Get signal"),
         BotCommand("help", "Help info")
     ])
 
